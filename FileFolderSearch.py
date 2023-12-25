@@ -193,7 +193,7 @@ class FolderSearch:
             print(e)
         return matching_folders
 
-    def fine_folders_with_keyword_list(self, keyword_list) -> list:
+    def find_folders_with_keyword_list(self, keyword_list) -> list:
         """
         Search for folders containing any of the specified keywords within the given root folder.
 
@@ -212,11 +212,13 @@ class FolderSearch:
 
             # Walk through the directory tree starting from the root_folder
             root_path = self._target_path
-            for folder_path, _, folders in os.walk(root_path):
-                for folder in folders:
+            for dirpath, dirnames, _ in os.walk(root_path):
+                for folder in dirnames:
                     for keyword in keyword_list:
                         if keyword in folder:
-                            matching_folders.append(os.path.join(folder_path, folder))
+                            matching_folders.append(
+                                os.path.join(dirpath, folder).replace("\\", "/")+"/"
+                            )
                             break  # Stop checking other keywords for this folder
 
         except ValueError as e:

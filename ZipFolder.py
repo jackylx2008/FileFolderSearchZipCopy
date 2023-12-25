@@ -17,9 +17,10 @@ def zip_folder(folder_path, destination_path=None):
         if destination_path is None:
             destination_path = os.path.dirname(folder_path)
 
-        output_zip = os.path.join(
-            destination_path, os.path.basename(folder_path) + ".zip"
-        )
+        last_folder = [
+            folder for folder in folder_path.rstrip("/").split("/") if folder
+        ][-1]
+        output_zip = os.path.join(destination_path, last_folder + ".zip")
         if not os.path.exists(destination_path):
             os.mkdir(destination_path)
         with zipfile.ZipFile(output_zip, "w", zipfile.ZIP_DEFLATED) as zipf:
