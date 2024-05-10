@@ -1,3 +1,4 @@
+import os
 import re
 
 import INIT
@@ -54,16 +55,21 @@ def get_strings_matching_pattern(file_path, pattern):
     return matched_strings
 
 
-pattern = PatternMaker.set_all_pattern().get_pattern()
-
-input_txt = "./csv_txt/lists.txt"
+# pattern = PatternMaker.set_all_pattern().get_pattern()
+#
+# input_txt = "./csv_txt/lists.txt"
 output_txt = "./csv_txt/temp.txt"
-pre_proc_txt(input_txt, output_txt)
-remove_chinese_characters(output_txt)
+# pre_proc_txt(input_txt, output_txt)
+# remove_chinese_characters(output_txt)
+#
+# match_str_list = get_strings_matching_pattern(output_txt, pattern)
 
-match_str_list = get_strings_matching_pattern(output_txt, pattern)
+# Read the file and store each line in a list
+with open(output_txt, "r") as file:
+    match_str_list = [line.strip() for line in file]
 size_match_str = len(match_str_list)
-print(f"Got {size_match_str} changes to zip")
+
+print(match_str_list)
 for str in match_str_list:
     print(str)
 
@@ -77,3 +83,14 @@ try:
         ZipFolder.zip_folder(folder, new_folder)
 except IndexError:
     print("IndexError: match_list is empty")
+
+# Setp3: Make sure all zip files
+numbers_zip = 0
+for i, file in enumerate(os.listdir(new_folder), start=1):
+    # Check if the file ends with .zip extension
+    if file.endswith(".zip"):
+        numbers_zip = numbers_zip + 1
+        print(f"{i}. {file}")
+
+print(f"Got {size_match_str} changes to zip")
+print(f"Got {numbers_zip} in {new_folder}")
