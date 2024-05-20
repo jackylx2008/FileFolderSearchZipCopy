@@ -74,15 +74,47 @@ for str in match_str_list:
     print(str)
 
 # Step2: Zip the folders to Desktop
+is_B25B26 = True
+is_B24 = False
 new_folder = INIT.Desktop_ROOT + "1111/"
-try:
-    match_list = FolderSearch(INIT.CNCC2_ROOT).find_folders_with_keyword_list(
-        match_str_list
-    )
-    for folder in match_list:
-        ZipFolder.zip_folder(folder, new_folder)
-except IndexError:
-    print("IndexError: match_list is empty")
+if is_B24:
+    try:
+        B24 = [
+            INIT.CNCC2_ROOT + "12 北京院-B24地块/酒店设计变更/酒店给排水/",
+            INIT.CNCC2_ROOT + "12 北京院-B24地块/酒店设计变更/酒店暖通/",
+        ]
+        match_list_list = []
+        for folder in B24:
+            temp_list = FolderSearch(folder).find_folders_with_keyword_list(
+                match_str_list
+            )
+            match_list_list.append(temp_list)
+
+        for list in match_list_list:
+            for folder in list:
+                ZipFolder.zip_folder(folder, new_folder)
+    except IndexError:
+        print("IndexError: match_list is empty")
+
+if is_B25B26:
+    try:
+        B25B26 = [
+            INIT.CNCC2_ROOT + "12 北京院-主体/415设计变更/415给排水/",
+            INIT.CNCC2_ROOT + "12 北京院-主体/415设计变更/415暖通/",
+            INIT.CNCC2_ROOT + "12 主体精装/主体精装变更/",
+        ]
+        match_list_list = []
+        for folder in B25B26:
+            temp_list = FolderSearch(folder).find_folders_with_keyword_list(
+                match_str_list
+            )
+            match_list_list.append(temp_list)
+
+        for list in match_list_list:
+            for folder in list:
+                ZipFolder.zip_folder(folder, new_folder)
+    except IndexError:
+        print("IndexError: match_list is empty")
 
 # Setp3: Make sure all zip files
 numbers_zip = 0

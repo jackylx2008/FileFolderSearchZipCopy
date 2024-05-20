@@ -196,5 +196,5 @@ def copy_pdf_docx_B25B26_V2():
 
 if __name__ == "__main__":
     # copy_pdf_docx_B25B26_biad()
-    # copy_pdf_docx_B25B26_V2()
+    # copy_pdf_docx_B25B26_V2() # WARN: Do not work
     copy_pdf_docx_B24()
