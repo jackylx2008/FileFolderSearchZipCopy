@@ -2,6 +2,7 @@ import os
 import platform
 import re
 import shutil
+import INIT
 from datetime import datetime
 
 
@@ -10,69 +11,21 @@ class PatternMaker:
     Generates a pattern based on company-specific criteria.
     """
 
-    def __init__(self, which_company: str, replace_word_dict: dict) -> None:
-        """
-        Initializes a PatternMaker object with company-specific parameters.
-
-        Args:
-        - which_company (str): The name of the company.
-        - replace_word_dict (dict): Dictionary containing 'first' and 'second' keys.
-        """
+    def __init__(self, which_company: str) -> None:
         self._which_company = which_company
         self._pattern = r""
-        self._replace_word_dict = replace_word_dict
-
-    @classmethod
-    def set_biad_all(cls):
-        return cls(which_company="biad", replace_word_dict=dict())
-
-    @classmethod
-    def set_all_pattern(cls):
-        return cls(which_company="all", replace_word_dict=dict())
 
     def get_pattern(self) -> str:
-        """
-        Generates and returns a pattern based on the specified company's criteria.
-
-        Returns:
-        - str: The generated pattern.
-        Raises:
-        - KeyError: If 'first' or 'second' keys are missing in the dictionary.
-        """
-        if self._which_company == "biad" and self._replace_word_dict:
-            try:
-                self._pattern = (
-                    r"("
-                    + self._replace_word_dict["first"]
-                    + r")"
-                    + r"(-\d{2}-C\d{1}-0\d{2}-)("
-                    + self._replace_word_dict["second"]
-                    + r")"
-                )
-            except KeyError:
-                raise KeyError("Key 'first' or 'second' is missing in the dictionary")
-        elif self._which_company == "biad" and not self._replace_word_dict:
+        if self._which_company == "2526biad":
+            self._pattern = r"[0][5|6]-[0][0-9]-[C]\d{1}-0\d{2}(-)([C]|[E])"
+        elif self._which_company == "2526decoration":
+            self._pattern = r"[0][5|6]-[0][0-9]-[C]\d{1}-[V|B]0\d{2}"
+        elif self._which_company == "2526all":
             self._pattern = (
-                r"(" + r"d{2}" + r")" + r"(-\d{2}-C\d{1}-0\d{2}-)(" + r"[A-Z]" + r")"
+                r"[0][5|6]-[0][0-9]-[C]\d{1}-[V|B]0\d{2}"
+                + r"|"
+                + r"[0][5|6]-[0][0-9]-[C]\d{1}-0\d{2}(-)([C]|[E])"
             )
-        elif self._which_company == "decoration":
-            try:
-                self._pattern = (
-                    r"("
-                    + self._replace_word_dict["first"]
-                    + r")"
-                    + r"(-\d{2}-C\d{1}-"
-                    + self._replace_word_dict["second"]
-                    + r"0\d{2})"
-                )
-            except KeyError:
-                raise KeyError("Key 'first' or 'second' is missing in the dictionary")
-        elif self._which_company == "all":
-            try:
-                # self._pattern = r"\d{2}-\d{2}-[A-Z]\d-[A-Z0-9]{4}"
-                self._pattern = r"\b\d{2}-\d{2}-[A-Z]\d-(?:V\d{3}|\d{3}-[A-Z])\b"
-            except KeyError:
-                raise KeyError("Key 'first' or 'second' is missing in the dictionary")
 
         return self._pattern
 
@@ -241,6 +194,26 @@ class FolderSearch:
             print(e)  # Print the error message if keyword_list is empty
             return []  # Return an empty list
 
+        return matching_folders
+
+    def find_folders_endwith_pattern(self, pattern: str) -> list:
+        matching_folders = []
+        try:
+            if not pattern:
+                raise ValueError("ERROR: Pattern string is empty")
+            else:
+                root_path = self._target_path
+                for root, dirs, _ in os.walk(root_path):
+                    for d in dirs:
+                        if re.findall(pattern, d):
+                            path = os.path.join(root, d)
+                            path = path.replace("\\", "/")
+                            if re.findall(pattern, path.split("/")[-1]):
+                                matching_folders.append(path)
+                    # matching_folders.extend( [os.path.join(root, d) for d in dirs if re.findall(pattern, d)])
+                matching_folders.sort()
+        except ValueError as e:
+            print(e)
         return matching_folders
 
 
@@ -442,7 +415,7 @@ def ChangeSubDirName():
         CheckSubDirNameAndSet(p)
 
 
-if __name__ == "__main__":
+def a():
     directory_path = r"D:\CloudStation\国会二期\12 北京院-主体\415设计变更"
     level3 = FolderUtility(directory_path).traverse(3)
     level2 = FolderUtility(directory_path).traverse(2)
@@ -454,3 +427,12 @@ if __name__ == "__main__":
     for p in result:
         if FolderSearch(p).is_folder_created_on_date("2024-02-04"):
             print(p)
+
+
+if __name__ == "__main__":
+    directory_path = r"D:/CloudStation/国会二期/"
+
+    P1 = PatternMaker("2526all").get_pattern()
+    result = FolderSearch(directory_path).find_folders_with_pattern(P1)
+    for f in result:
+        print(f)

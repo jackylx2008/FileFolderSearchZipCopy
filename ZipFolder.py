@@ -37,7 +37,7 @@ def test_zip_folder():
     new_folder = INIT.Desktop_ROOT + "1111/"
     print(new_folder)
 
-    p = PatternMaker("biad", INIT.pattern_biad_05_C)
+    p = PatternMaker("2526biad")
     try:
         match_list = INIT.BIAD_folder_obj.find_folders_with_pattern(p.get_pattern())
         for file in match_list:
